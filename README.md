@@ -13,4 +13,8 @@ Nepali sentences were collected from News Collection [here] (https://github.com/
 
 ## Dataset statistics
 
-## Report
+## Evaluation
+
+## How to run
+
+## Where to get embeddings
