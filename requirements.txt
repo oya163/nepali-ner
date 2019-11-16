@@ -1,0 +1,7 @@
+torchtext
+pandas
+tqdm
+scikit-learn
+uniseg
+nltk
+gensim

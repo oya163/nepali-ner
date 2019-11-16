@@ -1,0 +1,6 @@
+data/
+embeddings/
+logs/
+results/
+saved_models/
+__pycache__/
