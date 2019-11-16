@@ -32,8 +32,9 @@ class Dataloader():
         self.label_field = data.Field(unk_token=None, batch_first=True)
         self.char_field = data.Field(unk_token='<unk>', sequential=False)
         self.graph_field = data.Field(unk_token='<unk>', sequential=False)
+        self.pos_field = data.Field(unk_token=None, sequential=False)
 
-        self.fields = (('TEXT', self.txt_field), ('LABEL', self.label_field))
+        self.fields = (('TEXT', self.txt_field), ('POS', self.pos_field), ('LABEL', self.label_field))
 
         self.train_ds, self.val_ds, self.test_ds = SequenceTaggingDataset.splits(path=self.root_path,
                                                     fields=self.fields, separator='\t',
@@ -60,6 +61,7 @@ class Dataloader():
 
         self.txt_field.build_vocab(self.train_ds, self.test_ds, self.val_ds, max_size=None, vectors=self.vec)
         self.label_field.build_vocab(self.train_ds.LABEL, self.test_ds.LABEL, self.val_ds.LABEL)
+        self.pos_field.build_vocab(self.train_ds.POS, self.test_ds.POS, self.val_ds.POS)
         
         self.vocab_size = len(self.txt_field.vocab)
         self.tagset_size = len(self.label_field.vocab)
@@ -67,6 +69,11 @@ class Dataloader():
         self.graph_vocab_size = len(self.graph_field.vocab)
         
         self.weights = self.txt_field.vocab.vectors
+        
+        # Because len(pos) = 56 and len(pos_field.vocab) = 55
+        self.pos_size = len(self.pos_field.vocab) + 2
+        self.pos_one_hot = np.eye(self.pos_size)
+        self.one_hot_weight = torch.from_numpy(self.pos_one_hot).float()
         
         if config.verbose:
             self.print_stat()
@@ -111,8 +118,9 @@ class Dataloader():
     def print_stat(self):
         print('Length of text vocab (unique words in dataset) = ', self.vocab_size)
         print('Length of label vocab (unique tags in labels) = ', self.tagset_size)
+        print('Length of POS vocab (unique tags in POS) = ', self.pos_size)
         print('Length of char vocab (unique characters in dataset) = ', self.char_vocab_size)
-        print('Length of grapheme vocab (unique graphemes in dataset) = ', self.graph_vocab_size)        
+        print('Length of grapheme vocab (unique graphemes in dataset) = ', self.graph_vocab_size)
     
     def load_data(self, batch_size, shuffle=True):
         train_iter, val_iter, test_iter = data.BucketIterator.splits(datasets=(self.train_ds, self.val_ds, self.test_ds), 

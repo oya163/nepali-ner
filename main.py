@@ -43,8 +43,9 @@ def parse_args():
     parser.add_argument("-d", "--device", dest="device", type=str, default="cuda:3", help="device[‘cpu’,‘cuda:0’,‘cuda:1’,..]")
     parser.add_argument("-v", "--verbose", action='store_true', default=False, help="Print data description")
     parser.add_argument("-e", "--eval", action='store_true', default=False, help="For evaluation purpose only")
-    parser.add_argument("--use_char", action='store_true', default=False, help="Use character-level CNN")
-    parser.add_argument("--use_graph", action='store_true', default=False, help="Use grapheme-level CNN")
+    parser.add_argument("-p", "--pos", action='store_true', default=False, help="Use POS one-hot-encoding")
+    parser.add_argument("-c", "--char", action='store_true', default=False, help="Use character-level CNN")
+    parser.add_argument("-g", "--grapheme", action='store_true', default=False, help="Use grapheme-level CNN")
     parser.add_argument("-k", "--kfold", dest="kfold", type=int, default=5, metavar="INT", help="K-fold cross validation [default:1]")
 
     args = parser.parse_args()
@@ -65,8 +66,9 @@ def parse_args():
     config.log_dir = args.log_dir
     config.log_file = log_file
     config.data_log = data_log
-    config.use_char = args.use_char
-    config.use_graph = args.use_graph
+    config.use_pos = args.pos
+    config.use_char = args.char
+    config.use_graph = args.grapheme
     
     logger.info("***************************************")
     logger.info("Data file : {}".format(config.data_file))
@@ -76,6 +78,7 @@ def parse_args():
     logger.info("K-fold : {}".format(config.kfold))    
     logger.info("Log directory: {}".format(config.log_dir))     
     logger.info("Data log file: {}".format(config.data_log))
+    logger.info("Use POS one-hot-encoding: {}".format(config.use_pos))
     logger.info("Use character-level CNN: {}".format(config.use_char))      
     logger.info("Use grapheme-level CNN: {}".format(config.use_graph))      
     logger.info("***************************************")
