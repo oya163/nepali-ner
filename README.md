@@ -10,15 +10,19 @@ Nepali sentences were collected from News Collection [here] (https://github.com/
 
 ## Dataset statistics
 
-| Tokens          | EBIQUITY | ILPRL |
+Based on number of tokens for entities
+
+| Entities        | EBIQUITY | ILPRL |
 |-----------------|------|-------|
-| Person          | 5059 | 262   |
-| Organization    | 3811 | 180   |
-| Location        | 2313 | 273   |
-| Misc            | 0    | 461   |
+| PER             | 5059 | 262   |
+| ORG             | 3811 | 180   |
+| LOC             | 2313 | 273   |
+| MISC            | 0    | 461   |
 | Total sentences | 3606 | 548   |
 
 ## Results
+
+These results are obtained using [conlleval] (https://www.clips.uantwerpen.be/conll2000/chunking/conlleval.txt) tools
 
 | Dataset                | EBIQUITY | ILPRL  |
 |------------------------|----------|--------|
@@ -39,4 +43,19 @@ Nepali sentences were collected from News Collection [here] (https://github.com/
 | Lample et al. w/ word2vec | 86.49    | 78.48  |
 | BiLSTM + CNN (G)          | **86.893**   | 80.843 |
 | BiLSTM + CNN (G) + POS    | 85.210   | **82.190** |
+
+## Usage
+
+To run 5-fold cross validation for BiLSTM + POS + Grapheme-level CNN model
+
+    python main.py -k 5 -d cuda:0 -p -g
+
+
+## Reference
+- https://github.com/bamtercelboo/pytorch_NER_BiLSTM_CNN_CRF
+
+
+## Contact
+- osingh1@umbc.edu
+
 
