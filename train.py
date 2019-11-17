@@ -25,18 +25,22 @@ torch.manual_seed(163)
 
 from sklearn.metrics import accuracy_score
 
-  
 class Trainer():
     def __init__(self, config, logger, dataloader, model, k):
         self.config = config
         self.logger = logger
         self.dataloader = dataloader
         self.verbose = config.verbose
-
+        self.use_pos = config.use_pos
+        
         self.train_dl, self.val_dl, self.test_dl = dataloader.load_data(batch_size=config.batch_size)
+
+        ### DO NOT DELETE
+        ### DEBUGGING PURPOSE
 #         sample = next(iter(self.train_dl))
-#         self.logger.info(sample.TEXT)
-#         self.logger.info(sample.LABEL)
+#         print(sample.TEXT)
+#         print(sample.LABEL)
+#         print(sample.POS)
         
         self.train_dlen = len(self.train_dl)
         self.val_dlen = len(self.val_dl)
@@ -100,12 +104,17 @@ class Trainer():
             total_loss_train = 0          
 
             t = tqdm(iter(self.train_dl), leave=False, total=self.train_dlen)
-            for (X,y),z in t:
-                t.set_description(f'Epoch {epoch+1}')
-
+            for (k, v) in t:
+                t.set_description(f'Epoch {epoch+1}')                
                 self.opt.zero_grad()
                 
-                pred = self.model(X)
+                if self.use_pos:
+                    (X, p, y) = k
+                    pred = self.model(X, p)
+                else:
+                    (X, y) = k
+                    pred = self.model(X, None)
+                    
                 y = y.view(-1)
                 loss = self.loss_fn(pred, y)
                 loss.backward()
@@ -113,7 +122,6 @@ class Trainer():
 
                 t.set_postfix(loss=loss.item())
                 pred_idx = torch.max(pred, dim=1)[1]
-
 
                 y_true_train += list(y.cpu().data.numpy())
                 y_pred_train += list(pred_idx.cpu().data.numpy())

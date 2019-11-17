@@ -30,6 +30,14 @@ class LSTMTagger(nn.Module):
         self.tagset_size = dataloader.tagset_size
         self.embedding_dim = config.embedding_dim
         self.device = config.device
+        self.use_pos = config.use_pos
+        
+        if self.use_pos:
+            self.pos_size = dataloader.pos_size
+            self.embedding_dim = config.embedding_dim + self.pos_size
+            pos_one_hot = np.eye(self.pos_size)
+            one_hot_weight = torch.from_numpy(pos_one_hot).float()
+            self.one_hot_embeddings = nn.Embedding(self.pos_size, self.pos_size, _weight=one_hot_weight)
         
         if config.pretrained:
             self.word_embeddings = nn.Embedding.from_pretrained(dataloader.weights)
@@ -61,9 +69,15 @@ class LSTMTagger(nn.Module):
         return (h0, c0)
     
     
-    def forward(self, X):
+    def forward(self, X, y):
         X = self.word_embeddings(X)
         X = self.dropout_embed(X)
+        
+        # Concatenate POS-embedding here
+        if self.use_pos:
+            POS = self.one_hot_embeddings(y)
+            X = torch.cat((X, POS), dim=-1)
+        
         self.hidden = self.init_hidden(list(X.size()))
         self.lstm.flatten_parameters()
         X = self.dropout(X)
@@ -96,7 +110,15 @@ class CharLSTMTagger(nn.Module):
         nn.init.xavier_uniform_(self.graph_embeddings.weight)
         
         self.char_level = config.use_char
+        self.use_pos = config.use_pos
         
+        if self.use_pos:
+            self.pos_size = dataloader.pos_size
+            self.embedding_dim = self.embedding_dim + self.pos_size
+            pos_one_hot = np.eye(self.pos_size)
+            one_hot_weight = torch.from_numpy(pos_one_hot).float()
+            self.one_hot_embeddings = nn.Embedding(self.pos_size, self.pos_size, _weight=one_hot_weight)
+            
         if config.pretrained:
             self.word_embeddings = nn.Embedding.from_pretrained(dataloader.weights)
         else:
@@ -221,13 +243,18 @@ class CharLSTMTagger(nn.Module):
         return (h0, c0)
     
     
-    def forward(self, X):
+    def forward(self, X, y):
         X_char = self.get_char_tensor(X)    
         X = self.word_embeddings(X)
         X = self.dropout_embed(X)
         
         char_conv = self._char_forward(X_char)
         X = torch.cat((X, char_conv), dim=-1)
+        
+        # Concatenate POS-embedding here
+        if self.use_pos:
+            POS = self.one_hot_embeddings(y)
+            X = torch.cat((X, POS), dim=-1)        
         
         self.hidden = self.init_hidden(list(X.size()))
         self.lstm.flatten_parameters()

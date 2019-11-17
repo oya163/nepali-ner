@@ -2,6 +2,9 @@
 '''
     Main file
     Author: Oyesh Mann Singh
+    
+    How to run:
+        python main.py -k 1 -d cpu
 '''
 
 import os
@@ -30,7 +33,7 @@ from config.config import Configuration
 from models.models import LSTMTagger, CharLSTMTagger
 from train import Trainer
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
 
 
 def parse_args():
@@ -44,7 +47,7 @@ def parse_args():
     parser.add_argument("-v", "--verbose", action='store_true', default=False, help="Print data description")
     parser.add_argument("-e", "--eval", action='store_true', default=False, help="For evaluation purpose only")
     parser.add_argument("-p", "--pos", action='store_true', default=False, help="Use POS one-hot-encoding")
-    parser.add_argument("-c", "--char", action='store_true', default=False, help="Use character-level CNN")
+    parser.add_argument("-r", "--char", action='store_true', default=False, help="Use character-level CNN")
     parser.add_argument("-g", "--grapheme", action='store_true', default=False, help="Use grapheme-level CNN")
     parser.add_argument("-k", "--kfold", dest="kfold", type=int, default=5, metavar="INT", help="K-fold cross validation [default:1]")
 
@@ -109,6 +112,7 @@ def main():
                       output_dir = config.root_path, 
                       verbose    = config.verbose, 
                       kfold      = config.kfold,
+                      pos        = config.use_pos,
                       log_file   = config.data_log)
     
     tot_acc = 0
@@ -126,8 +130,8 @@ def main():
         dataloader = Dataloader(config, k)
     
         # Debugging purpose. Don't delete
-        #sample = next(iter(train_iter))
-        #print(sample.TEXT)
+#         sample = next(iter(train_iter))
+#         print(sample.TEXT)
 
         # Load model
         if config.use_char or config.use_graph:

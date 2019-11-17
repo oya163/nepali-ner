@@ -13,7 +13,9 @@
 import io
 import os
 import logging
+import numpy as np
 
+import torch
 import torchtext
 from torchtext import data
 from torchtext import vocab
@@ -22,20 +24,41 @@ from torchtext.datasets import SequenceTaggingDataset
 
 from uniseg.graphemecluster import grapheme_clusters
 
+
+class BatchGenerator:
+    def __init__(self, dl, x_field, y_field, z_field):
+        self.dl, self.x_field, self.y_field, self.z_field = dl, x_field, y_field, z_field
+        
+    def __len__(self):
+        return len(self.dl)
+    
+    def __iter__(self):
+        for batch in self.dl:
+            X = getattr(batch, self.x_field)
+            y = getattr(batch, self.y_field)
+            z = getattr(batch, self.z_field)
+            yield ((X,y), z)
+            
+
 class Dataloader():
     def __init__(self, config, k):
         self.root_path = os.path.join(config.root_path, k)
         self.batch_size = config.batch_size
         self.device = config.device
+        self.use_pos = config.use_pos
         
         self.txt_field = data.Field(tokenize=list, use_vocab=True, unk_token='<unk>', batch_first=True)
         self.label_field = data.Field(unk_token=None, batch_first=True)
         self.char_field = data.Field(unk_token='<unk>', sequential=False)
         self.graph_field = data.Field(unk_token='<unk>', sequential=False)
-        self.pos_field = data.Field(unk_token=None, sequential=False)
+        
+        self.fields = (('TEXT', self.txt_field), ('LABEL', self.label_field))
+        
+        if config.use_pos:
+            self.pos_field = data.Field(unk_token=None, batch_first=True)
+            self.fields = (('TEXT', self.txt_field), ('POS', self.pos_field), ('LABEL', self.label_field))
 
-        self.fields = (('TEXT', self.txt_field), ('POS', self.pos_field), ('LABEL', self.label_field))
-
+        
         self.train_ds, self.val_ds, self.test_ds = SequenceTaggingDataset.splits(path=self.root_path,
                                                     fields=self.fields, separator='\t',
                                                     train='train.txt', validation='val.txt',
@@ -61,7 +84,7 @@ class Dataloader():
 
         self.txt_field.build_vocab(self.train_ds, self.test_ds, self.val_ds, max_size=None, vectors=self.vec)
         self.label_field.build_vocab(self.train_ds.LABEL, self.test_ds.LABEL, self.val_ds.LABEL)
-        self.pos_field.build_vocab(self.train_ds.POS, self.test_ds.POS, self.val_ds.POS)
+        
         
         self.vocab_size = len(self.txt_field.vocab)
         self.tagset_size = len(self.label_field.vocab)
@@ -70,10 +93,12 @@ class Dataloader():
         
         self.weights = self.txt_field.vocab.vectors
         
-        # Because len(pos) = 56 and len(pos_field.vocab) = 55
-        self.pos_size = len(self.pos_field.vocab) + 2
-        self.pos_one_hot = np.eye(self.pos_size)
-        self.one_hot_weight = torch.from_numpy(self.pos_one_hot).float()
+        if config.use_pos:
+            self.pos_field.build_vocab(self.train_ds.POS, self.test_ds.POS, self.val_ds.POS)
+            # Because len(pos) = 56 and len(pos_field.vocab) = 55
+            self.pos_size = len(self.pos_field.vocab) + 2
+            self.pos_one_hot = np.eye(self.pos_size)
+            self.one_hot_weight = torch.from_numpy(self.pos_one_hot).float()
         
         if config.verbose:
             self.print_stat()
@@ -99,7 +124,10 @@ class Dataloader():
 
     def tagset_size(self):
         return self.tagset_size
-    
+
+    def pos_size(self):
+        return self.pos_size
+
     def weights(self):
         return self.weights
 
@@ -118,7 +146,8 @@ class Dataloader():
     def print_stat(self):
         print('Length of text vocab (unique words in dataset) = ', self.vocab_size)
         print('Length of label vocab (unique tags in labels) = ', self.tagset_size)
-        print('Length of POS vocab (unique tags in POS) = ', self.pos_size)
+        if self.use_pos:
+            print('Length of POS vocab (unique tags in POS) = ', self.pos_size)
         print('Length of char vocab (unique characters in dataset) = ', self.char_vocab_size)
         print('Length of grapheme vocab (unique graphemes in dataset) = ', self.graph_vocab_size)
     
@@ -131,6 +160,14 @@ class Dataloader():
                                             repeat=False,
                                             shuffle=True)
         
+#         if self.use_pos:
+#             train_iter = BatchGenerator(train_iter, 'TEXT', 'POS', 'LABEL')
+#             val_iter = BatchGenerator(val_iter, 'TEXT', 'POS', 'LABEL')
+#             test_iter = BatchGenerator(test_iter, 'TEXT', 'POS', 'LABEL')
+#             sample = next(iter(test_iter))
+#             print(sample.TEXT)
+#             return train_iter, val_iter, test_iter
+#         else:
         return train_iter, val_iter, test_iter
 
         
