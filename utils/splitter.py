@@ -45,7 +45,7 @@ def text_tag_convert_with_pos(input_file, logger, verbose=False):
             #print(i+1)
             row = row.strip().split("\t")
 
-            if len(row)>1:
+            if len(row) > 2:
                 sentence.append(row[0])
                 pos.append(row[1])
                 tag.append(row[-1])
@@ -65,6 +65,7 @@ def text_tag_convert_with_pos(input_file, logger, verbose=False):
                     logger.info("Length of longer sentence = {}".format(len(sentence)))
                 sentence = []
                 tag = []                 
+                pos = []
 
 
         if verbose:
@@ -258,7 +259,7 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser("Dataset Splitter Argument Parser")
     parser.add_argument("-i", "--input_file", default="./data/umbc/stemmed/total.txt", metavar="PATH", help="Input file path")
     parser.add_argument("-o", "--output_dir", default="./data/umbc/stemmed/kfold", metavar="PATH", help="Output Directory")
-    parser.add_argument("-p", "--pos", action='store_true', default=False, help="Use POS one-hot-encoding")
+    parser.add_argument("-p", "--pos", action='store_true', default=False, help="Use POS")
     parser.add_argument("-k", "--kfold", dest='kfold', type=int, default=1, metavar="INT", help="K-fold")
     parser.add_argument("-v", "--verbose", action='store_true', default=False, help="Print description")
     parser.add_argument("-l", "--log_file", dest="log_file", type=str, metavar="PATH", default="./logs/data_log.txt",help="Log file")
