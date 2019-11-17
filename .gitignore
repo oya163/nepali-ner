@@ -4,3 +4,5 @@ logs/
 results/
 saved_models/
 __pycache__/
+utils/__pycache__/
+models/__pycache__/
