@@ -6,7 +6,7 @@ We publicly release Nepali NER Dataset
 
 National Nepali Corpus is provided by [Bal Krishna Bal](http://ku.edu.np/cse/faculty/bal/ ), Professor, Kathmandu University.
 
-Nepali sentences were collected from News Collection [here](https://github.com/sndsabin/Nepali-News-Classifier)
+Nepali sentences were collected from News Collection [here](https://github.com/sndsabin/Nepali-News-Classifier) and [here](https://pdfs.semanticscholar.org/c8c4/d371c9b8a759b3927de6c2b0f1fa98f4501c.pdf)
 
 ## Dataset statistics
 
