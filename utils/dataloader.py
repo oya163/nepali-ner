@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 '''
-    POS Dataloader
+    NER Dataloader
     Author: Oyesh Mann Singh
     Date: 10/14/2019
 
     Data format:
-        <WORD>  <POS-tag>
+        <WORD>  <NER-tag>
 
 '''
 
