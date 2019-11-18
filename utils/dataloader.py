@@ -24,22 +24,6 @@ from torchtext.datasets import SequenceTaggingDataset
 
 from uniseg.graphemecluster import grapheme_clusters
 
-
-class BatchGenerator:
-    def __init__(self, dl, x_field, y_field, z_field):
-        self.dl, self.x_field, self.y_field, self.z_field = dl, x_field, y_field, z_field
-        
-    def __len__(self):
-        return len(self.dl)
-    
-    def __iter__(self):
-        for batch in self.dl:
-            X = getattr(batch, self.x_field)
-            y = getattr(batch, self.y_field)
-            z = getattr(batch, self.z_field)
-            yield ((X,y), z)
-            
-
 class Dataloader():
     def __init__(self, config, k):
         self.root_path = os.path.join(config.root_path, k)
@@ -159,15 +143,7 @@ class Dataloader():
                                             sort_within_batch=True, 
                                             repeat=False,
                                             shuffle=True)
-        
-#         if self.use_pos:
-#             train_iter = BatchGenerator(train_iter, 'TEXT', 'POS', 'LABEL')
-#             val_iter = BatchGenerator(val_iter, 'TEXT', 'POS', 'LABEL')
-#             test_iter = BatchGenerator(test_iter, 'TEXT', 'POS', 'LABEL')
-#             sample = next(iter(test_iter))
-#             print(sample.TEXT)
-#             return train_iter, val_iter, test_iter
-#         else:
+
         return train_iter, val_iter, test_iter
 
         
