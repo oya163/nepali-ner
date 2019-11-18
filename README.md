@@ -1,12 +1,12 @@
 # Named Entity Recognition for Nepali Language
 
-Code to reproduce [Named Entity Recognition for Nepali Language] (https://arxiv.org/abs/1908.05828)
+Code to reproduce [Named Entity Recognition for Nepali Language](https://arxiv.org/abs/1908.05828)
 
 We publicly release Nepali NER Dataset
 
-National Nepali Corpus is provided by [Bal Krishna Bal] (http://ku.edu.np/cse/faculty/bal/ ), Professor, Kathmandu University.
+National Nepali Corpus is provided by [Bal Krishna Bal](http://ku.edu.np/cse/faculty/bal/ ), Professor, Kathmandu University.
 
-Nepali sentences were collected from News Collection [here] (https://github.com/sndsabin/Nepali-News-Classifier)
+Nepali sentences were collected from News Collection [here](https://github.com/sndsabin/Nepali-News-Classifier)
 
 ## Dataset statistics
 
