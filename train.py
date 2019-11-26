@@ -137,8 +137,15 @@ class Trainer():
                 y_pred_val = list()
                 total_loss_val = 0
                 v = tqdm(iter(self.val_dl), leave=False)
-                for (X, y),z in v:
-                    pred = self.model(X)
+                for (k, v) in v:
+#                 for (X, y),z in v:
+#                     pred = self.model(X)
+                    if self.use_pos:
+                        (X, p, y) = k
+                        pred = self.model(X, p)
+                    else:
+                        (X, y) = k
+                        pred = self.model(X, None)
                     y = y.view(-1)
                     loss = self.loss_fn(pred, y)
                     pred_idx = torch.max(pred, 1)[1]
