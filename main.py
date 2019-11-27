@@ -106,7 +106,7 @@ def main():
     # Parse argument
     config, logger = parse_args()
     
-    if config.kfold > 0:
+    if config.kfold > 0 and not config.eval:
         logger.info("Splitting dataset into {0}-fold".format(config.kfold))
         splitter.main(input_file = config.data_file, 
                       output_dir = config.root_path, 
@@ -124,7 +124,8 @@ def main():
         # To match the output filenames
         k = str(i+1)
         
-        logger.info("Starting training on {0}-fold".format(k))
+        if not config.eval:
+            logger.info("Starting training on {0}th-fold".format(k))
         
         # Load data iterator
         dataloader = Dataloader(config, k)
