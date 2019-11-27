@@ -81,6 +81,7 @@ def text_tag_convert_with_pos(input_file, logger, verbose=False):
         tag_f.close()
         pos_f.close()
         logger.info("Text, POS and Tag files are stored in {}".format(output_dir))
+        logger.info("******************************************************")
         return sent_file, pos_file, tag_file
 
 
@@ -140,6 +141,7 @@ def text_tag_convert(input_file, logger, verbose=False):
         txt_f.close()
         tag_f.close()
         logger.info("Text and Tag files are stored in {}".format(output_dir))
+        logger.info("******************************************************")
         return sent_file, tag_file
 
 
