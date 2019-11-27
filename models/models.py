@@ -71,7 +71,7 @@ class LSTMTagger(nn.Module):
     
     def forward(self, X, y):
         X = self.word_embeddings(X)
-        X = self.dropout_embed(X)
+#         X = self.dropout_embed(X)
         
         # Concatenate POS-embedding here
         if self.use_pos:
@@ -80,8 +80,8 @@ class LSTMTagger(nn.Module):
         
         self.hidden = self.init_hidden(list(X.size()))
         self.lstm.flatten_parameters()
-        X = self.dropout(X)
         X, _ = self.lstm(X, self.hidden)
+        X = self.dropout(X)
         tag_space = self.hidden2tag(X.view(-1, X.shape[2]))
         tag_scores = F.log_softmax(tag_space, dim=1)
         return tag_scores
