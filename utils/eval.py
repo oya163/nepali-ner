@@ -17,7 +17,7 @@ import torch.nn as nn
 from tqdm import tqdm, tqdm_notebook, tnrange
 tqdm.pandas(desc='Progress')
 
-import utils.conll_eval as e
+import utils.conlleval_perl as e
 
 class Evaluator():
     def __init__(self, config, logger, model, dataloader, model_name):
@@ -26,6 +26,7 @@ class Evaluator():
         self.model = model
         self.model_name = model_name
         self.dataloader = dataloader
+        self.use_pos = config.use_pos
         
         self.train_dl, self.val_dl, self.test_dl = dataloader.load_data(batch_size=1, shuffle=False)
         self.results_dir = config.results_dir
@@ -57,9 +58,15 @@ class Evaluator():
     def write_results(self):
         with open(self.train_file, 'w', encoding='utf-8') as rtrn:
             self.logger.info('Writing in file: {0}'.format(self.train_file))
-            for (X, y),z in iter(self.train_dl):
+            tr = tqdm(iter(self.train_dl), leave=False)
+            for (k, v) in tr:
+                if self.use_pos:
+                    (X, p, y) = k
+                    pred = self.model(X, p)
+                else:
+                    (X, y) = k
+                    pred = self.model(X, None)
                 sent = self.numpy_to_sent(X)
-                pred = self.model(X)
                 pred_idx = torch.max(pred, 1)[1]
 
                 y = y.view(-1)
@@ -76,9 +83,16 @@ class Evaluator():
 
         with open(self.test_file, 'w', encoding='utf-8') as rtst:
             self.logger.info('Writing in file: {0}'.format(self.test_file))
-            for (X, y),z in iter(self.test_dl):
+            tt = tqdm(iter(self.test_dl), leave=False)
+            for (k, v) in tt:
+                if self.use_pos:
+                    (X, p, y) = k
+                    pred = self.model(X, p)
+                else:
+                    (X, y) = k
+                    pred = self.model(X, None)
                 sent = self.numpy_to_sent(X)
-                pred = self.model(X)
+                
                 pred_idx = torch.max(pred, 1)[1]
 
                 y = y.view(-1)
@@ -95,9 +109,16 @@ class Evaluator():
 
         with open(self.val_file, 'w', encoding='utf-8') as rval:
             self.logger.info('Writing in file: {0}'.format(self.val_file))
-            for (X, y),z in iter(self.val_dl):
+            vl = tqdm(iter(self.val_dl), leave=False)
+            for (k, v) in vl:
+                if self.use_pos:
+                    (X, p, y) = k
+                    pred = self.model(X, p)
+                else:
+                    (X, y) = k
+                    pred = self.model(X, None)
                 sent = self.numpy_to_sent(X)
-                pred = self.model(X)
+                
                 pred_idx = torch.max(pred, 1)[1]
 
                 y = y.view(-1)
@@ -117,5 +138,10 @@ class Evaluator():
         """
             Prints CoNLL Evaluation Report
         """
-        acc, prec, rec, f1 = e.evaluate_conll_file(self.logger, self.test_file)
+        acc, prec, rec, f1 = e.evaluate_conll_file(logger = self.logger,
+                                                   fileName = self.test_file,
+                                                   raw = True,
+                                                   delimiter = None,
+                                                   oTag = 'O',
+                                                   latex = False)
         return (acc, prec, rec, f1)
