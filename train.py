@@ -138,8 +138,6 @@ class Trainer():
                 total_loss_val = 0
                 v = tqdm(iter(self.val_dl), leave=False)
                 for (k, v) in v:
-#                 for (X, y),z in v:
-#                     pred = self.model(X)
                     if self.use_pos:
                         (X, p, y) = k
                         pred = self.model(X, p)
