@@ -1,6 +1,7 @@
 data/
 embeddings/
 logs/
+logs_backup/
 results/
 saved_models/
 __pycache__/
