@@ -71,7 +71,6 @@ class LSTMTagger(nn.Module):
     
     def forward(self, X, y):
         X = self.word_embeddings(X)
-#         X = self.dropout_embed(X)
         
         # Concatenate POS-embedding here
         if self.use_pos:
@@ -103,11 +102,16 @@ class CharLSTMTagger(nn.Module):
         self.graph_embed_num = dataloader.graph_vocab_size
         self.char_dim = config.char_dim
         self.embedding_dim = config.embedding_dim + config.char_dim
-        self.char_embeddings = nn.Embedding(self.char_embed_num, self.char_dim, padding_idx=0)
-        self.graph_embeddings = nn.Embedding(self.graph_embed_num, self.char_dim, padding_idx=0)
         
-        nn.init.xavier_uniform_(self.char_embeddings.weight)
-        nn.init.xavier_uniform_(self.graph_embeddings.weight)
+        if config.char_pretrained:
+            self.char_embeddings = nn.Embedding.from_pretrained(dataloader.char_weights)
+            self.graph_embeddings = nn.Embedding.from_pretrained(dataloader.graph_weights)
+        else:
+            self.char_embeddings = nn.Embedding(self.char_embed_num, self.char_dim, padding_idx=0)
+            self.graph_embeddings = nn.Embedding(self.graph_embed_num, self.char_dim, padding_idx=0)
+
+            nn.init.xavier_uniform_(self.char_embeddings.weight)
+            nn.init.xavier_uniform_(self.graph_embeddings.weight)
         
         self.char_level = config.use_char
         self.use_pos = config.use_pos
@@ -246,7 +250,6 @@ class CharLSTMTagger(nn.Module):
     def forward(self, X, y):
         X_char = self.get_char_tensor(X)    
         X = self.word_embeddings(X)
-        X = self.dropout_embed(X)
         
         char_conv = self._char_forward(X_char)
         X = torch.cat((X, char_conv), dim=-1)

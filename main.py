@@ -33,9 +33,6 @@ from config.config import Configuration
 from models.models import LSTMTagger, CharLSTMTagger
 from train import Trainer
 
-# device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
-
-
 def parse_args():
     """
         Argument Parser

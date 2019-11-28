@@ -59,15 +59,22 @@ class Dataloader():
 
         self.graph_list.sort()
         self.char_list.sort()
-
-        self.char_field.build_vocab(self.char_list)
-        self.graph_field.build_vocab(self.graph_list)
         
         self.embedding_dir = config.emb_dir
         self.vec = vocab.Vectors(name=config.emb_file, cache=self.embedding_dir)
 
         self.txt_field.build_vocab(self.train_ds, self.test_ds, self.val_ds, max_size=None, vectors=self.vec)
         self.label_field.build_vocab(self.train_ds.LABEL, self.test_ds.LABEL, self.val_ds.LABEL)
+        
+        if config.char_pretrained:
+            self.char_vec = vocab.Vectors(name=config.char_emb_file, cache=self.embedding_dir)
+            self.graph_vec = vocab.Vectors(name=config.graph_emb_file, cache=self.embedding_dir)
+            
+            self.char_field.build_vocab(self.char_list, vectors=self.char_vec)
+            self.graph_field.build_vocab(self.graph_list, vectors=self.graph_vec)
+        else:
+            self.char_field.build_vocab(self.char_list)
+            self.graph_field.build_vocab(self.graph_list)
         
         
         self.vocab_size = len(self.txt_field.vocab)
@@ -76,6 +83,8 @@ class Dataloader():
         self.graph_vocab_size = len(self.graph_field.vocab)
         
         self.weights = self.txt_field.vocab.vectors
+        self.char_weights = self.char_field.vocab.vectors
+        self.graph_weights = self.graph_field.vocab.vectors
         
         if config.use_pos:
             self.pos_field.build_vocab(self.train_ds.POS, self.test_ds.POS, self.val_ds.POS)
@@ -115,6 +124,12 @@ class Dataloader():
     def weights(self):
         return self.weights
 
+    def char_weights(self):
+        return self.char_weights
+    
+    def graph_weights(self):
+        return self.graph_weights    
+    
     def get_char_vocab_size(self):
         return self.char_vocab_size
     
