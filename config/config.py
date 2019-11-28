@@ -58,7 +58,19 @@ class Configuration(ConfigParser):
     @property
     def embed_finetune(self):
         return self._config.getboolean('EMBEDDINGS', 'embed_finetune')  
-
+    
+    @property
+    def char_pretrained(self):
+        return self._config.getboolean('EMBEDDINGS', 'char_pretrained')  
+    
+    @property
+    def char_emb_file(self):
+        return self._config.get('EMBEDDINGS', 'char_emb_file')
+    
+    @property
+    def graph_emb_file(self):
+        return self._config.get('EMBEDDINGS', 'graph_emb_file')
+    
     @property
     def char_dim(self):
         return self._config.getint('EMBEDDINGS', 'char_dim')    
@@ -154,3 +166,21 @@ class Configuration(ConfigParser):
     @property
     def dropout(self):
         return self._config.getfloat('MODEL', 'dropout')     
+    
+    # ------------------EVALUATION
+    @property
+    def raw(self):
+        return self._config.getboolean('EVALUATION', 'raw')
+    
+    @property
+    def delimiter(self):
+        return self._config.get('EVALUATION', 'delimiter')
+    
+    @property
+    def oTag(self):
+        return self._config.get('EVALUATION', 'oTag')
+    
+    @property
+    def latex(self):
+        return self._config.getboolean('EVALUATION', 'latex')
+       

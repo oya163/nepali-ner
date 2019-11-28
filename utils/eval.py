@@ -39,6 +39,11 @@ class Evaluator():
         self.test_file = os.path.join(self.results_dir, ts_file)
         self.val_file = os.path.join(self.results_dir, vl_file)
         
+        self.raw = config.raw
+        self.delimiter = config.delimiter
+        self.oTag = config.oTag
+        self.latex = config.latex
+        
     def numpy_to_sent(self, tensor):
         '''
             Returns the corresponding TEXT of given Predictions
@@ -140,8 +145,8 @@ class Evaluator():
         """
         acc, prec, rec, f1 = e.evaluate_conll_file(logger = self.logger,
                                                    fileName = self.test_file,
-                                                   raw = True,
-                                                   delimiter = None,
-                                                   oTag = 'O',
-                                                   latex = False)
+                                                   raw = self.raw,
+                                                   delimiter = self.delimiter,
+                                                   oTag = self.oTag,
+                                                   latex = self.latex)
         return (acc, prec, rec, f1)
