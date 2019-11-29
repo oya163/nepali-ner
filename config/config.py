@@ -12,7 +12,7 @@ from configparser import ConfigParser
 class Configuration(ConfigParser):
     def __init__(self, config_file, logger):
         super().__init__()
-        config = ConfigParser()
+        config = ConfigParser(allow_no_value=True)
         config.read(config_file)
         self._config = config
         self.config_file = config_file

@@ -142,7 +142,7 @@ class Evaluator():
     def conll_eval(self):
         """
             Prints CoNLL Evaluation Report
-        """
+        """        
         acc, prec, rec, f1 = e.evaluate_conll_file(logger = self.logger,
                                                    fileName = self.test_file,
                                                    raw = self.raw,
