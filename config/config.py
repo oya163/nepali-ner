@@ -132,8 +132,12 @@ class Configuration(ConfigParser):
 
     @property
     def lr_rate_decay(self):
-        return self._config.getfloat("OPTIM", "lr_rate_decay")
-
+        return self._config.get("OPTIM", "lr_rate_decay")
+    
+    @property
+    def learning_rate_warmup_steps(self):
+        return self._config.getfloat("OPTIM", "learning_rate_warmup_steps")
+    
     @property
     def min_lrate(self):
         return self._config.getfloat("OPTIM", "min_lrate")

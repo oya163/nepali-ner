@@ -25,6 +25,22 @@ torch.manual_seed(163)
 
 from sklearn.metrics import accuracy_score
 
+# Decay functions to be used with lr_scheduler
+def lr_decay_noam(config):
+    return lambda t: (
+        10.0 * config.hidden_dim**-0.5 * min(
+        (t + 1) * config.learning_rate_warmup_steps**-1.5, (t + 1)**-0.5))
+
+def lr_decay_exp(config):
+    return lambda t: config.learning_rate_falloff ** t
+
+
+# Map names to lr decay functions
+lr_decay_map = {
+    'noam': lr_decay_noam,
+    'exp': lr_decay_exp
+}
+
 class Trainer():
     def __init__(self, config, logger, dataloader, model, k):
         self.config = config
@@ -54,6 +70,35 @@ class Trainer():
         self.opt = optim.Adam(filter(lambda p: p.requires_grad, self.model.parameters()), 
                          lr=config.learning_rate, 
                          weight_decay=config.weight_decay)
+        
+        self.lr_scheduler_step = self.lr_scheduler_epoch = None
+        
+        # Set up learing rate decay scheme
+        if config.use_lr_decay:
+            if '_' not in config.lr_rate_decay:
+                raise ValueError("Malformed learning_rate_decay")
+            lrd_scheme, lrd_range = config.lr_rate_decay.split('_')
+
+            if lrd_scheme not in lr_decay_map:
+                raise ValueError("Unknown lr decay scheme {}".format(lrd_scheme))
+            
+            lrd_func = lr_decay_map[lrd_scheme]            
+            lr_scheduler = optim.lr_scheduler.LambdaLR(
+                                            self.opt, 
+                                            lrd_func(config),
+                                            last_epoch=-1
+                                        )
+            # For each scheme, decay can happen every step or every epoch
+            if lrd_range == 'epoch':
+                self.lr_scheduler_epoch = lr_scheduler
+            elif lrd_range == 'step':
+                self.lr_scheduler_step = lr_scheduler
+            else:
+                raise ValueError("Unknown lr decay range {}".format(lrd_range))
+                
+                
+        
+
     
         self.k = k
         self.model_name=config.model_name + self.k
@@ -105,7 +150,9 @@ class Trainer():
 
             t = tqdm(iter(self.train_dl), leave=False, total=self.train_dlen)
             for (k, v) in t:
-                t.set_description(f'Epoch {epoch+1}')                
+                t.set_description(f'Epoch {epoch+1}')     
+                self.model.train()
+                
                 self.opt.zero_grad()
                 
                 if self.use_pos:
@@ -120,13 +167,19 @@ class Trainer():
                 loss.backward()
                 self.opt.step()
 
+                if self.lr_scheduler_step:
+                    self.lr_scheduler_step.step()
+                
                 t.set_postfix(loss=loss.item())
                 pred_idx = torch.max(pred, dim=1)[1]
 
                 y_true_train += list(y.cpu().data.numpy())
                 y_pred_train += list(pred_idx.cpu().data.numpy())
                 total_loss_train += loss.item()
-
+            
+            if self.lr_scheduler_epoch:
+                self.lr_scheduler_epoch.step()
+                
             train_acc = accuracy_score(y_true_train, y_pred_train)
             train_loss = total_loss_train/self.train_dlen
             self.total_train_loss.append(train_loss)
