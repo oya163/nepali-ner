@@ -215,11 +215,11 @@ def evaluate(correctChunk, foundGuessed, foundCorrect, correctTags, tokenCounter
     # print overall performance, and performance per chunk type
     if not latex:
         # compute overall precision, recall and FB1 (default values are 0.0)
-        precision, recall, FB1 = calcMetrics(correctChunkSum, foundGuessedSum, foundCorrectSum)
+        total_precision, total_recall, total_FB1 = calcMetrics(correctChunkSum, foundGuessedSum, foundCorrectSum)
         # print overall performance
         logger.info("processed %i tokens with %i phrases; found: %i phrases; correct: %i.\n" % (tokenCounter, foundCorrectSum, foundGuessedSum, correctChunkSum))
         if tokenCounter:
-            logger.info("accuracy: %6.2f%%; precision: %6.2f%%; recall: %6.2f%%; FB1: %6.2f" % (100*correctTags/tokenCounter, precision, recall, FB1))
+            logger.info("accuracy: %6.2f%%; precision: %6.2f%%; recall: %6.2f%%; FB1: %6.2f" % (100*correctTags/tokenCounter, total_precision, total_recall, total_FB1))
 
         for i in sortedTypes:
             precision, recall, FB1 = calcMetrics(correctChunk[i], foundGuessed[i], foundCorrect[i])
@@ -235,12 +235,12 @@ def evaluate(correctChunk, foundGuessed, foundCorrect, correctTags, tokenCounter
                  (i,precision,recall,FB1))
         logger.info("\\hline")
 
-        precision, recall, FB1 = calcMetrics(correctChunkSum, foundGuessedSum, foundCorrectSum)
+        total_precision, total_recall, total_FB1 = calcMetrics(correctChunkSum, foundGuessedSum, foundCorrectSum)
         logger.info("Overall &  %6.2f\\%% & %6.2f\\%% & %6.2f \\\\\\hline" %
-              (precision,recall,FB1))
+              (total_precision,total_recall,total_FB1))
         
-    acc = 100*correctTags/tokenCounter
-    return acc, precision, recall, FB1
+    total_acc = 100*correctTags/tokenCounter
+    return total_acc, total_precision, total_recall, total_FB1
 
         
 def evaluate_conll_file(**args):
