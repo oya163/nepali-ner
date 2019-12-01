@@ -177,8 +177,6 @@ class Trainer():
                 y_pred_train += list(pred_idx.cpu().data.numpy())
                 total_loss_train += loss.item()
             
-            if self.lr_scheduler_epoch:
-                self.lr_scheduler_epoch.step()
                 
             train_acc = accuracy_score(y_true_train, y_pred_train)
             train_loss = total_loss_train/self.train_dlen
@@ -212,6 +210,9 @@ class Trainer():
             self.total_val_loss.append(valloss)
             self.total_val_acc.append(valacc)
 
+            if self.lr_scheduler_epoch:
+                self.lr_scheduler_epoch.step()
+                
             if valloss < prev_val_loss:
                 self.save_checkpoint()
                 prev_val_loss = valloss
