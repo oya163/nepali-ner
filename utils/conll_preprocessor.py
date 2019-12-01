@@ -17,8 +17,8 @@ def preprocess(input_file, output_file):
         for i, row in enumerate(in_file):
             #To know which line is defunct in file
             #print(i+1)
-            row = row.strip().split(" ")self.train.labels
-            if len(row) > 3:
+            row = row.strip().split(" ")
+            if len(row) >= 4:
                 if row[0] != "-DOCSTART-":
                     out_file.write(row[0]+"\t"+row[1]+"\t"+row[3]+"\n")
             else:
