@@ -51,10 +51,13 @@ class LSTMTagger(nn.Module):
         if self.bidirectional:
             self.hidden2tag = nn.Linear(self.hidden_dim * 2, self.tagset_size)
         else:
-            self.hidden2tag = nn.Linear(self.hidden_dim * 2, self.tagset_size)      
+            self.hidden2tag = nn.Linear(self.hidden_dim, self.tagset_size)      
         
         self.dropout = nn.Dropout(config.dropout)
-        self.dropout_embed = nn.Dropout(config.dropout_embed)
+#         self.dropout_embed = nn.Dropout(config.dropout_embed)
+        
+#         self.extra_layer = nn.Linear(2*self.hidden_dim, self.hidden_dim)
+#         self.final_layer = nn.Linear(self.hidden_dim, self.tagset_size)
 
     def init_hidden(self, tensor_size):
         if self.bidirectional:
@@ -77,12 +80,13 @@ class LSTMTagger(nn.Module):
             POS = self.one_hot_embeddings(y)
             X = torch.cat((X, POS), dim=-1)
         
-        self.hidden = self.init_hidden(list(X.size()))
-        self.lstm.flatten_parameters()
-        X, _ = self.lstm(X, self.hidden)
-        X = self.dropout(X)
+#         self.hidden = self.init_hidden(list(X.size()))
+#         self.lstm.flatten_parameters()
+        X, _ = self.lstm(self.dropout(X))
+        
         tag_space = self.hidden2tag(X.view(-1, X.shape[2]))
         tag_scores = F.log_softmax(tag_space, dim=1)
+
         return tag_scores
 
 
@@ -259,12 +263,7 @@ class CharLSTMTagger(nn.Module):
             POS = self.one_hot_embeddings(y)
             X = torch.cat((X, POS), dim=-1)        
         
-        self.hidden = self.init_hidden(list(X.size()))
-        self.lstm.flatten_parameters()
-        
-        X, _ = self.lstm(X, self.hidden)  
-        X = self.dropout(X)
-        X = torch.tanh(X)
+        X, _ = self.lstm(self.dropout(X))
         tag_space = self.hidden2tag(X.view(-1, X.shape[2]))
         tag_scores = F.log_softmax(tag_space, dim=1)
         
