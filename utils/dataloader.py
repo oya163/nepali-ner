@@ -59,6 +59,9 @@ class Dataloader():
 
         self.graph_list.sort()
         self.char_list.sort()
+
+        self.char_field.build_vocab(self.char_list)
+        self.graph_field.build_vocab(self.graph_list)        
         
         self.embedding_dir = config.emb_dir
         self.vec = vocab.Vectors(name=config.emb_file, cache=self.embedding_dir)
