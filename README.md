@@ -2,11 +2,14 @@
 
 Code to reproduce [Named Entity Recognition for Nepali Language](https://arxiv.org/abs/1908.05828)
 
-We publicly release Nepali NER Dataset
+We publicly release Nepali NER Dataset version 1 and version 2. We have named this dataset as EBIQUITY as I published this paper/dataset while working in EBIQUITY lab in UMBC. They are further splitted into raw and stemmed version.
 
-National Nepali Corpus is provided by [Bal Krishna Bal](http://ku.edu.np/cse/faculty/bal/ ), Professor, Kathmandu University.
+* v1 - IO tagging scheme
+* v2 - BIO tagging scheme with corrections. Correction details are stated in README.txt inside the dataset folder. **Recommended to use**
 
-Nepali sentences were collected from News Collection [here](https://github.com/sndsabin/Nepali-News-Classifier) and [here](https://pdfs.semanticscholar.org/c8c4/d371c9b8a759b3927de6c2b0f1fa98f4501c.pdf)
+National Nepali Corpus can be found [here](https://www.sketchengine.eu/nepali-national-corpus/)
+
+Nepali sentences were collected from online news website of the year [2015-2016](https://github.com/sndsabin/Nepali-News-Classifier) and [2009-2010](https://pdfs.semanticscholar.org/c8c4/d371c9b8a759b3927de6c2b0f1fa98f4501c.pdf)
 
 ## Dataset statistics
 
@@ -19,6 +22,17 @@ Based on number of tokens for entities
 | LOC             | 2313 | 273   |
 | MISC            | 0    | 461   |
 | Total sentences | 3606 | 548   |
+
+## Embedding comparison
+| Embeddings          | Raw       | Stemmed |
+|---------------------|-----------|---------|
+| Random              | 73.98     | 76.410  |
+| Word2Vec_CBOW       | 74.465    | 82.230  |
+| Word2Vec_Skip Gram  | 76.873    | 84.330  |
+| GloVe               | 75.718    | 83.833  |
+| fastText_Pretrained | 80.403    | 82.068  |
+| fastText_CBOW       | 78.343    | 81.415  |
+| fastText_Skip Gram  | **81.793**    | **85.535**  |
 
 ## Results
 
