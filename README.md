@@ -2,7 +2,7 @@
 
 Code to reproduce [Named Entity Recognition for Nepali Language](https://arxiv.org/abs/1908.05828)
 
-We publicly release Nepali NER Dataset version 1 and version 2. We have named this dataset as EBIQUITY as I published this paper/dataset while working in EBIQUITY lab in UMBC. They are further splitted into raw and stemmed version.
+We publicly release Nepali NER Dataset version 1 and version 2. We have named this dataset as EBIQUITY as we published this paper/dataset while working in EBIQUITY lab in UMBC. They are further divided into raw and stemmed (brute-force approach) version.
 
 * v1 - IO tagging scheme
 * v2 - BIO tagging scheme with corrections. Correction details are stated in README.txt inside the dataset folder. **Recommended to use**
