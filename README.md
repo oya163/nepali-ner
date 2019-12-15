@@ -74,7 +74,7 @@ To run 5-fold cross validation for BiLSTM + POS + Grapheme-level CNN model
 
 ## Citation
 
-If this dataset helped you in your research, feel free to cite the paper :)
+If this dataset helped you in your research, feel free to cite the paper :smile:
 
     @misc{singh2019named,
         title={Named Entity Recognition for Nepali Language},
