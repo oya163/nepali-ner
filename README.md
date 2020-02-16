@@ -76,13 +76,4 @@ To run 5-fold cross validation for BiLSTM + POS + Grapheme-level CNN model
 
 If this dataset helped you in your research, feel free to cite the paper :smile:
 
-    @misc{singh2019named,
-        title={Named Entity Recognition for Nepali Language},
-        author={Oyesh Mann Singh and Ankur Padia and Anupam Joshi},
-        year={2019},
-        eprint={1908.05828},
-        archivePrefix={arXiv},
-        primaryClass={cs.CL}
-    }
-
-
+    O. M. Singh, A. Padia and A. Joshi, "Named Entity Recognition for Nepali Language," 2019 IEEE 5th International Conference on Collaboration and Internet Computing (CIC), Los Angieles, CA, USA, 2019, pp. 184-190.
