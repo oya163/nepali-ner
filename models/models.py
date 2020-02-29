@@ -31,6 +31,11 @@ class LSTMTagger(nn.Module):
         self.embedding_dim = config.embedding_dim
         self.device = config.device
         self.use_pos = config.use_pos
+                
+        if config.pretrained:
+            self.word_embeddings = nn.Embedding.from_pretrained(dataloader.weights)
+        else:
+            self.word_embeddings = nn.Embedding(self.vocab_size, self.embedding_dim)
         
         if self.use_pos:
             self.pos_size = dataloader.pos_size
@@ -38,12 +43,7 @@ class LSTMTagger(nn.Module):
             pos_one_hot = np.eye(self.pos_size)
             one_hot_weight = torch.from_numpy(pos_one_hot).float()
             self.one_hot_embeddings = nn.Embedding(self.pos_size, self.pos_size, _weight=one_hot_weight)
-        
-        if config.pretrained:
-            self.word_embeddings = nn.Embedding.from_pretrained(dataloader.weights)
-        else:
-            self.word_embeddings = nn.Embedding(self.vocab_size, self.embedding_dim)
-        
+            
         self.lstm = nn.LSTM(self.embedding_dim, self.hidden_dim, 
                             bidirectional=self.bidirectional, 
                             num_layers=self.num_layers)
@@ -74,11 +74,14 @@ class LSTMTagger(nn.Module):
     
     def forward(self, X, y):
         X = self.word_embeddings(X)
+#         print("X shape", X.shape)
         
         # Concatenate POS-embedding here
         if self.use_pos:
             POS = self.one_hot_embeddings(y)
+#             print("POS shape", POS.shape)
             X = torch.cat((X, POS), dim=-1)
+#             print("X shape", X.shape)
         
 #         self.hidden = self.init_hidden(list(X.size()))
 #         self.lstm.flatten_parameters()
