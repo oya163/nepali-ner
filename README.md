@@ -38,7 +38,7 @@ Based on number of tokens for entities
 
 These results are obtained using [conlleval] (https://www.clips.uantwerpen.be/conll2000/chunking/conlleval.txt) tools
 
-| Dataset                | EBIQUITY | ILPRL  |
+| Model                | EBIQUITY | ILPRL  |
 |------------------------|----------|--------|
 | Stanford CRF           | 75.160   | 56.250 |
 | BiLSTM                 | 85.535   | 77.718 |
@@ -50,7 +50,7 @@ These results are obtained using [conlleval] (https://www.clips.uantwerpen.be/co
 
 ## Comparison
 
-| Dataset                   | EBIQUITY | ILPRL  |
+| Model                   | EBIQUITY | ILPRL  |
 |---------------------------|----------|--------|
 | Bam et al. SVM            | 66.26    | 46.26  |
 | Ma and Hovy w/ glove      | 83.63    | 72.1   |
