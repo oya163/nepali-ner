@@ -13,65 +13,6 @@ from uniseg.graphemecluster import grapheme_clusters
 tqdm.pandas(desc='Progress')
 
 
-class LSTMInferer(nn.Module):
-    def __init__(self, config):
-        super(LSTMInferer, self).__init__()
-        self.bidirectional = config.bidirection
-        self.num_layers = config.num_layers
-        self.batch_size = config.batch_size
-        self.hidden_dim = config.hidden_dim
-        self.vocab_size = 11764
-        self.tagset_size = 8
-        self.embedding_dim = config.embedding_dim
-        self.device = config.device
-        self.use_pos = config.use_pos
-
-        self.word_embeddings = nn.Embedding(self.vocab_size, self.embedding_dim)
-
-        if self.use_pos:
-            self.pos_size = 8
-            self.embedding_dim = config.embedding_dim + self.pos_size
-            pos_one_hot = np.eye(self.pos_size)
-            one_hot_weight = torch.from_numpy(pos_one_hot).float()
-            self.one_hot_embeddings = nn.Embedding(self.pos_size, self.pos_size, _weight=one_hot_weight)
-
-        self.lstm = nn.LSTM(self.embedding_dim, self.hidden_dim,
-                            bidirectional=self.bidirectional,
-                            num_layers=self.num_layers)
-
-        if self.bidirectional:
-            self.hidden2tag = nn.Linear(self.hidden_dim * 2, self.tagset_size)
-        else:
-            self.hidden2tag = nn.Linear(self.hidden_dim, self.tagset_size)
-
-        self.dropout = nn.Dropout(config.dropout)
-
-    def init_hidden(self, tensor_size):
-        if self.bidirectional:
-            h0 = torch.zeros(2 * self.num_layers, tensor_size[1], self.hidden_dim)
-            c0 = torch.zeros(2 * self.num_layers, tensor_size[1], self.hidden_dim)
-        else:
-            h0 = torch.zeros(self.num_layers, tensor_size[1], self.hidden_dim)
-            c0 = torch.zeros(self.num_layers, tensor_size[1], self.hidden_dim)
-        if self.device:
-            h0 = h0.to(self.device)
-            c0 = c0.to(self.device)
-        return h0, c0
-
-    def forward(self, X, y):
-        X = self.word_embeddings(X)
-        # Concatenate POS-embedding here
-        if self.use_pos:
-            POS = self.one_hot_embeddings(y)
-            X = torch.cat((X, POS), dim=-1)
-        X, _ = self.lstm(self.dropout(X))
-
-        tag_space = self.hidden2tag(X.view(-1, X.shape[2]))
-        tag_scores = F.log_softmax(tag_space, dim=1)
-
-        return tag_scores
-
-
 class LSTMTagger(nn.Module):
     def __init__(self, config, dataloader):
         super(LSTMTagger, self).__init__()
@@ -85,7 +26,7 @@ class LSTMTagger(nn.Module):
         self.device = config.device
         self.use_pos = config.use_pos
 
-        if config.pretrained:
+        if config.pretrained and not config.infer:
             self.word_embeddings = nn.Embedding.from_pretrained(dataloader.weights)
         else:
             self.word_embeddings = nn.Embedding(self.vocab_size, self.embedding_dim)
