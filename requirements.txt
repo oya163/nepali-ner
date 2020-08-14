@@ -1,5 +1,5 @@
-cpu/torch-1.6.0%2Bcpu-cp36-cp36m-linux_x86_64.whl
-cpu/torchvision-0.7.0%2Bcpu-cp36-cp36m-linux_x86_64.whl
+http://download.pytorch.org/whl/cpu/torch-1.6.0%2Bcpu-cp36-cp36m-linux_x86_64.whl
+http://download.pytorch.org/whl/cpu/torchvision-0.7.0%2Bcpu-cp36-cp36m-linux_x86_64.whl
 torchtext~=0.7.0
 pandas~=1.0.5
 tqdm~=4.47.0

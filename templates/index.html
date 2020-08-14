@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Nepali NER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+      .container {
+        max-width: 1000px;
+      }
+      div.example {
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Nepali Named Entity Recognition (LSTM-based)</h1>
+      <form role="form" method='POST' action='/post'>
+        <div class="form-group">
+         <textarea rows = "5" cols = "60" type="text" name="input" class="form-control" id="url-box" placeholder="शब्दहरु दिनुहोस : (Enter a sentence in Nepali)" autofocus required></textarea>
+        </div>
+        <button type="submit" class="btn btn-default">बुझाउ (Submit)</button>
+      </form>
+      <br>
+        <div class="example">
+          <h2>Examples</h2>
+          <ul>
+            <li>म नेपाल मा बस्छु ।</li>
+            <li>बाबु राम भट्टराई नेपाल का हुन् ।</li>
+            <li>पुष्प कमल दाहाल एमाओवादी का अद्यक्ष्य हुन्। </li>
+          </ul>
+          <br>
+        </div>
+      <hr>
+      {% for error in errors %}
+        <h4>{{ error }}</h4>
+      <hr>
+      {% endfor %}
+        <div class="results">
+          {% if results %}
+            <h2>Results</h2>
+            <br>
+            <ul>
+            {% for (txt, res) in results %}
+              <tr>
+                <h4>{{txt}} <span style="padding-left:5em">{{res}}</span></h4>
+              </tr>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+        <hr>
+        <footer>
+          <p>Developed by: Oyashi</p>
+          <p>Github: <a href="https://github.com/oya163/nepali-ner">https://github.com/oya163/nepali-ner</a></p>
+        </footer>          
+    </div>
+     
+    <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  </body>
+</html>
