@@ -8,3 +8,4 @@ uniseg~=0.7.1
 nltk~=3.5
 gensim
 numpy~=1.18.5
+gunicorn
