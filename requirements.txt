@@ -1,7 +1,10 @@
-torchtext
-pandas
-tqdm
-scikit-learn==0.18.2
-uniseg
-nltk
+cpu/torch-1.6.0%2Bcpu-cp36-cp36m-linux_x86_64.whl
+cpu/torchvision-0.7.0%2Bcpu-cp36-cp36m-linux_x86_64.whl
+torchtext~=0.7.0
+pandas~=1.0.5
+tqdm~=4.47.0
+scikit-learn~=0.23.1
+uniseg~=0.7.1
+nltk~=3.5
 gensim
+numpy~=1.18.5
