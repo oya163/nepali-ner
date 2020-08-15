@@ -64,7 +64,8 @@ def infer(config, dataloader, model):
 def inference(config):
     dataloader = Dataloader(config, '1')
     model = LSTMTagger(config, dataloader).to(config.device)
-    model.load_state_dict(torch.load(config.model_file)['state_dict'])
+    # Load the model trained on gpu, to currently specified device
+    model.load_state_dict(torch.load(config.model_file, map_location=config.device)['state_dict'])
     pred_tag = infer(config, dataloader, model)
     return pred_tag
 
