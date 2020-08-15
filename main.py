@@ -69,6 +69,8 @@ def parse_args():
     config.use_pos = args.pos
     config.use_char = args.char
     config.use_graph = args.grapheme
+    config.vocab_file = 'vocab/vocab.pkl'
+    config.label_file = 'vocab/labels.pkl'
     config.infer = args.infer
     config.txt = args.txt
 
