@@ -65,12 +65,17 @@ To run 5-fold cross validation for BiLSTM + POS + Grapheme-level CNN model
     python main.py -k 5 -d cuda:0 -p -g
 
 
+## Web App
+- A simple flask based [web app](https://nepner.herokuapp.com/)
+
+
 ## Reference
 - https://github.com/bamtercelboo/pytorch_NER_BiLSTM_CNN_CRF
 
 
 ## Contact
 - osingh1@umbc.edu
+
 
 ## Citation
 
