@@ -63,15 +63,14 @@ class Dataloader():
         self.embedding_dir = config.emb_dir
         self.vec = vocab.Vectors(name=config.emb_file, cache=self.embedding_dir)
 
-        if config.infer:
-            self.txt_field = pickle.load(open(config.vocab_file, 'rb'))
-            self.label_field = pickle.load(open(config.label_file, 'rb'))
-        else:
-            self.txt_field.build_vocab(self.train_ds, self.test_ds, self.val_ds, max_size=None, vectors=self.vec)
-            self.label_field.build_vocab(self.train_ds.LABEL, self.test_ds.LABEL, self.val_ds.LABEL)
+        self.txt_field.build_vocab(self.train_ds, self.test_ds, self.val_ds, max_size=None, vectors=self.vec)
+        self.label_field.build_vocab(self.train_ds.LABEL, self.test_ds.LABEL, self.val_ds.LABEL)
 
-            pickle.dump(self.txt_field, open(config.vocab_file, 'wb'))
-            pickle.dump(self.label_field, open(config.label_file, 'wb'))
+        output = open(config.vocab_file, 'wb')
+        pickle.dump(self.txt_field, output)
+
+        output_label = open(config.label_file, 'wb')
+        pickle.dump(self.label_field, output_label)
 
         if config.char_pretrained:
             self.char_vec = vocab.Vectors(name=config.char_emb_file, cache=self.embedding_dir)
